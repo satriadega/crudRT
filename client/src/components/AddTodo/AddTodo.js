@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTodo, addTodos } from "../../store/todoSlice";
+import { addTodos } from "../../store/todoSlice";
 import { nanoid } from "@reduxjs/toolkit";
 
 const AddTodo = () => {
@@ -9,6 +9,7 @@ const AddTodo = () => {
 
     const submit = (e) => {
         // console.log(e.key);
+
         if (text.length > 0) {
             // dispatch(addTodo({ id: nanoid(), todo: text, completed: false }));
             const items = text.split(",");
@@ -20,19 +21,16 @@ const AddTodo = () => {
                 );
             }); */
 
-            if (e.key === "Enter") {
-                // second method
-                dispatch(
-                    addTodos(
-                        items.map((item) => ({
-                            id: nanoid(),
-                            text: item,
-                            completed: false,
-                        }))
-                    )
-                );
-                setText("");
-            }
+            dispatch(
+                addTodos(
+                    items.map((item) => ({
+                        id: nanoid(),
+                        text: item,
+                        completed: false,
+                    }))
+                )
+            );
+            setText("");
         }
     };
     return (
@@ -44,7 +42,23 @@ const AddTodo = () => {
             <input
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                onKeyDown={submit}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        if (text.length > 0) {
+                            const items = text.split(",");
+                            dispatch(
+                                addTodos(
+                                    items.map((item) => ({
+                                        id: nanoid(),
+                                        text: item,
+                                        completed: false,
+                                    }))
+                                )
+                            );
+                            setText("");
+                        }
+                    }
+                }}
             />
             <button onClick={submit}>Add Todo</button>
         </div>
